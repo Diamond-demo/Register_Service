@@ -7,6 +7,7 @@ app.use(bodyParser.json());
 const dbconnect = require('./dbConnect.js');
 const UserModel = require('./user_schema.js');
 
+const PORT = 5001;
 
 //REG API
 app.post('/register', async (req, res) => {
@@ -35,4 +36,4 @@ app.post('/register', async (req, res) => {
 
 
 // START THE EXPRESS SERVER. 5000 is the PORT NUMBER
-app.listen(5000, () => console.log('EXPRESS Server Started at Port No: 5000'));
+app.listen(PORT, () => console.log('EXPRESS Server Started at Port No: ' + PORT));
