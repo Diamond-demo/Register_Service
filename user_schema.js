@@ -15,6 +15,7 @@ const UserSchema = schema_mongoose.Schema(
       },
       role: { 
          type: String,
+         enum: ["admin", "user"], // Limit roles to specific values
          default: "user"
       }
    },

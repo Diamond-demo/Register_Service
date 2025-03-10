@@ -1,6 +1,7 @@
 // STEP-1 : IMPORT MONGOOSE PACKAGE
 require("dotenv").config();
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const UserModel = require('./user_schema.js');
 
 // Database Connection URL
@@ -17,10 +18,12 @@ mongoose.connect(url)
         // Check if an admin exists
         const adminExists = await UserModel.findOne({ role: "admin" });
         if (!adminExists) {
+            
+            const hashedPassword = await bcrypt.hash("admin", 10); // Encrypt password
             const adminUser = new UserModel({
                 userId: 1,
                 username: "admin",
-                password: "admin",  
+                password: hashedPassword,  
                 role: "admin"
             });
 

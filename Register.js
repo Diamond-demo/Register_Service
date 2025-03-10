@@ -1,4 +1,5 @@
 const e1 = require('express');
+const bcrypt = require('bcryptjs');
 var app = e1();
 
 var bodyParser = require("body-parser");
@@ -6,6 +7,8 @@ app.use(bodyParser.json());
 
 const dbconnect = require('./dbConnect.js');
 const UserModel = require('./user_schema.js');
+
+const PORT = 5001;
 
 
 //REG API
@@ -22,9 +25,18 @@ app.post('/register', async (req, res) => {
     const lastUser = await UserModel.findOne().sort({ userId: -1 });
     const newUserId = lastUser ? lastUser.userId + 1 : 1000; // Start from 1000 if no users exist
 
-    // Create new user with incremented userId
-    const newUser = new UserModel({ userId: newUserId, username, password });
-    await newUser.save();
+    // Encrypt the password before saving
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create new user with hashed password
+    const newUser = new UserModel({ 
+      userId: newUserId, 
+      username, 
+      password: hashedPassword 
+    });
+
+    await newUser.save(); 
 
     res.status(201).json({ message: 'User registered successfully!', userId: newUserId });
   } catch (err) {
@@ -35,4 +47,4 @@ app.post('/register', async (req, res) => {
 
 
 // START THE EXPRESS SERVER. 5000 is the PORT NUMBER
-app.listen(5000, () => console.log('EXPRESS Server Started at Port No: 5000'));
+app.listen(PORT, () => console.log('EXPRESS Server Started at Port No: ' + PORT));
